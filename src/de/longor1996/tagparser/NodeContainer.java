@@ -4,23 +4,44 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A container that holds Node's.
+ * A container that holds instances of either the TagNode-class or the DataNode-class.
  **/
 public class NodeContainer
 {
-	private ArrayList<AbstractNode> nodes;
+	private final ArrayList<AbstractNode> nodes;
 	
+	/**
+	 * Creates a new NodeContainer.
+	 **/
 	public NodeContainer()
 	{
 		this.nodes = new ArrayList<AbstractNode>();
 	}
 	
-	public void add(AbstractNode node)
+	/**
+	 * Creates a new NodeContainer with the given initial capacity.
+	 **/
+	public NodeContainer(int initialCapacity)
+	{
+		this.nodes = new ArrayList<AbstractNode>(initialCapacity);
+	}
+	
+	public final void addChild(AbstractNode node)
 	{
 		this.nodes.add(node);
 	}
 	
-	public List<AbstractNode> list()
+	public final int getChildCount()
+	{
+		return this.nodes.size();
+	}
+	
+	public final AbstractNode getChild(int index)
+	{
+		return this.nodes.get(index);
+	}
+	
+	public final List<AbstractNode> list()
 	{
 		return this.nodes;
 	}

@@ -3,22 +3,55 @@ package de.longor1996.tagparser;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.concurrent.TimeUnit;
+import java.io.PrintStream;
 
 import de.longor1996.tagparser.TagParser.TagParserException;
 
+/**
+ * A simple class with a main-method to test the TagParser-class.
+ **/
 public class TagParserTest
 {
-	
+	/**
+	 * Main-Method for the test.
+	 * Remove it if you want to actually use the parser.
+	 **/
 	public static void main(String[] args)
 	{
-		File file = new File("test.tag");
+		// Make File Handle
+		File file = new File("parser-test.txt");
 		
+		// If the test-file does not exist, create it.
 		if(!file.exists())
 		{
 			try
 			{
+				// Create the file...
 				file.createNewFile();
+				
+				// Then fill it with basic test-data...
+				PrintStream out = new PrintStream(file);
+				
+				out.println("TagParser Test-File");
+				out.println();
+				out.println("<div>");
+				out.println("  This is a Text-Block!<br/>");
+				out.println("  The tag before this sentence is marked as a 'single-tag', so it will not start/end a branch in the tag-tree.");
+				out.println("</div>");
+				out.println();
+				out.println("Testing attribute parsing here!");
+				out.println();
+				out.println("<div/ attributeKey = \"attributeValue\" c = 0>");
+				out.println("<div/ attributeKey = attributeValue >");
+				out.println("<div/ attributeKey = 4 >");
+				out.println("<div/ attributeKey = 128px >");
+				out.println("<div/ attributeKey = 100% >");
+				out.println("<div/ attributeKey >");
+				out.println("<div/ attributeKey = =>");
+				out.println();
+				
+				// Close it
+				out.close();
 			}
 			catch (IOException e)
 			{
@@ -26,78 +59,48 @@ public class TagParserTest
 			}
 		}
 		
-		TagParser p = new TagParser();
-		TagNode t = null;
+		// Create a new parser.
+		TagParser parser = new TagParser();
+		TagNode parser_output = null;
 		
-		long bestTime = 0;
-		long totalTime = System.currentTimeMillis();
-		int MAX = 1;
-		
-		try {
-			long T = System.currentTimeMillis();
-			
-			if(MAX > 1)
-			{
-				System.out.println("> Processing 0 of " + MAX + " ...");
-			}
-			
-			for(int i = 0; i < MAX; i++)
-			{
-				long C = System.currentTimeMillis();
-				
-				t = p.parse(new FileInputStream(file));
-				
-				if((C - T) >= 1000)
-				{
-					System.out.println("> Processing " + i + " of " + MAX + " ...");
-					T = C;
-				}
-				
-				if(i == 0)
-				{
-					bestTime = p.result_time;
-				}
-				
-				if(p.result_time < bestTime)
-				{
-					bestTime = p.result_time;
-				}
-			}
-		} catch (TagParserException e) {
+		// Parse the File!
+		try
+		{
+			parser_output = parser.parse(new FileInputStream(file));
+		}
+		catch (TagParserException e)
+		{
+			// The parser had a problem parsing the document.
 			e.printStackTrace();
-		} catch (IOException e) {
+		}
+		catch (IOException e)
+		{
+			// The parser encountered a problem while reading the stream.
 			e.printStackTrace();
 		}
 		
-		System.out.println();
+		System.out.println("Parser took " + parser.result_time + " milliseconds to parse the file.");
 		
-		if(MAX > 1)
+		// If the tag got read without problems, print it out to the console.
+		if(parser_output != null)
 		{
-			System.out.println("Best Time: " + bestTime + " nanoseconds");
-			System.out.println("Best Time: " + TimeUnit.NANOSECONDS.toMicros(bestTime) + " microseconds");
-			System.out.println("Best Time: " + TimeUnit.NANOSECONDS.toMillis(bestTime) + " milliseconds");
-			System.out.println("Best Time: " + TimeUnit.NANOSECONDS.toSeconds(bestTime) + " seconds");
-			System.out.println("Total Time: " + TimeUnit.MILLISECONDS.toMillis(System.currentTimeMillis() - totalTime) + " milliseconds");
-		}
-		
-		System.out.println();
-		
-		if(t != null)
-		{
-			print("# ", "  ", t);
+			print("# ", "  ", parser_output);
 		}
 		
 	}
 	
-	public static void print(String postFix, String appendum, TagNode t)
+	/**
+	 * Pretty silly method to print the tag-tree to the console.
+	 **/
+	public static void print(String postFix, String appendum, TagNode tag)
 	{
 		System.out.print(postFix);
-		System.out.print(t.toString());
+		System.out.print(tag.toString());
 		System.out.println();
 		
-		if(t.container != null)
+		if(tag.container != null)
 		{
-			for(AbstractNode node : t.container.list())
+			for(AbstractNode node : tag.container.list())
 			{
 				if(node instanceof TagNode)
 				{
@@ -112,6 +115,5 @@ public class TagParserTest
 			}
 		}
 	}
-	
 	
 }

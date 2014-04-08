@@ -1,9 +1,18 @@
 package de.longor1996.tagparser;
 
+/**
+ * A simple node that contains textual data.
+ **/
 public class DataNode extends AbstractNode
 {
-	public final String data;
+	/**
+	 * The actual data.
+	 **/
+	public String data;
 	
+	/**
+	 * Constructor
+	 **/
 	public DataNode(String data)
 	{
 		this.data = data;
@@ -12,7 +21,17 @@ public class DataNode extends AbstractNode
 	@Override
 	public String toString()
 	{
-		return "node:Data:{'"+this.data+"'}";
+		return "node:Data:{content:'"+this.data+"'}";
+	}
+	
+	public String getData()
+	{
+		return this.data;
+	}
+	
+	public void setData(String newData)
+	{
+		this.data = newData;
 	}
 	
 }

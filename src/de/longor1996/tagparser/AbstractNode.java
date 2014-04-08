@@ -1,6 +1,10 @@
 package de.longor1996.tagparser;
 
 /**
+ * Abstract class to describe a 'Node' in a HTML-style document.
+ * There are only two types of nodes, namely 'Tag' and 'Data'.
+ * 
+ * <hr>
  * <ul>
  * <li>A {@code AbstractNode} can only be of the types {@code Tag} <i>or</i>
  * {@code Data}. <br/>
